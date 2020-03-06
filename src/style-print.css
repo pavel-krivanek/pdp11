@@ -1,0 +1,24 @@
+.title,
+.controls,
+.topbar,
+.cursor {
+	display: none !important;
+}
+
+.output {
+	box-shadow: none;
+	border: none;
+	padding: 10ex 0 0 0;
+	background-image: none;
+}
+
+#Carriage {
+	left: 0 !important;
+	top: 0 !important;
+	left: 5em;
+	margin-left: 0;
+}
+
+body {
+	background-color: white;
+}

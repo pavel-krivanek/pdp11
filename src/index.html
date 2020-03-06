@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>PDP-11</title>
+      <link rel="stylesheet" href="style.css" media="all">
+      <link rel="stylesheet" href="style-print.css" media="print">
+      <script type="text/javascript" src="jquery.min.js"></script>
+      <script type="text/javascript" src="ion.sound.min.js"></script>
+      <script src="disasm.js" type="text/javascript"></script>
+      <script src="cons.js" type="text/javascript"></script>
+      <script src="rk05.js" type="text/javascript"></script>
+      <script src="pdp11.js" type="text/javascript"></script>
+      <script src="teletype.js" type="text/javascript"></script>
+   </head>
+   <body onload="reset(); rkinit(); run(); printer();">
+      <div class="controls">
+         <input type="button" value="reset" onclick="reset()" />
+         <input type="button" value="run" onclick="run()" />
+         <input type="button" value="stop" onclick="stop()" />
+         <span id="ips"> </span>
+         <span id="rkbusy" style='display: none'>hard disk busy</span>
+      </div>
+      <div class="introMessage">Type <tt>unix</tt> at the <tt>@</tt> prompt to load the kernel (avoid empty string here). <a href="http://aiju.de/code/pdp11/faq">FAQ</a></div>
+      <textarea id="terminal" readonly="readonly" onkeypress="addchar(event.which)" onkeyup="specialchar(event.which)"> </textarea>
+      <textarea id="debug" readonly="readonly"> </textarea>
+      <div id="Carriage">
+         <div class="output">
+         </div>
+         <div class="cursor"><img id="cursorImage" src="head.png"></div>
+      </div>
+   </body>
+</html>

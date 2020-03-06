@@ -1,0 +1,181 @@
+@font-face {
+	font-family: TeleType;
+	src: local("TeleType"), url('teletype.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+	font-family: Helvetica, sans-serif;
+	font-size: 14px;
+	line-height: 20px;
+	background-color: #333;
+	margin: 0;
+        overflow: hidden;
+}
+
+h1 {
+	margin-top: 0;
+	margin-bottom: 0;
+	font-family: TeleType, Courier, "Courier New", monospace;
+	font-weight: bold;
+	font-size: 40px;
+}
+
+h2 {
+	margin-top: 0;
+	font-size: 20px;
+}
+
+h3 {
+	font-size: 16px;
+}
+
+.bars {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 9;
+	width: 100%;
+}
+
+.topbar {
+	padding: 1ex 0% 2px 1%;
+	background-color: white;
+	height: auto;
+	display: none;
+}
+
+.info {
+	font-family: Courier, 'Courier New', monospace;
+	top: 6em;
+	padding: 8em 4em;
+	max-width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #eee;
+	display: none;
+}
+
+.buttonbar {
+	clear: both;
+	background-color: #eee;
+}
+
+.buttons {
+	display: none;
+}
+
+.buttons.left {
+	float: left;
+}
+
+.buttons.right {
+	float: right;
+}
+
+.instruct {
+	font-size: 18px;
+	color: #666;
+	background-color: #eee;
+}
+
+.instruct ul ul {
+	font-size: 16px;
+}
+
+#Carriage {
+	font-family: TeleType, Courier, "Courier New", monospace;
+	font-size: 20px;
+	line-height: 30px;
+	position: absolute;
+	left: 50%;
+	margin-left: -26em;
+	top: 0;
+	//height: 165ex;
+	height: 20ex;
+}
+
+.output {
+	margin-bottom: 2em;
+	position: relative;
+	/* within position:absolute #Carriage */
+	width: 52em;
+	//height: 160ex;
+	height: 20ex;
+	left: 0;
+	top: 0;
+	background-color: white;
+	background-image: url(handmadepaper.png);
+	border: 1px solid black;
+	/*  box-shadow: 8px 8px 4px #888; */
+	white-space: nowrap;
+	z-index: 2;
+}
+
+.cursor {
+	position: absolute;
+	z-index: 4;
+	/*border: 2px solid red;
+				display: none;*/
+}
+
+.title {
+	float: left;
+	width: 550px;
+}
+
+.controls {
+	margin: 0 1em;
+	float: right;
+}
+
+.control {
+	float: left;
+	width: 150px;
+	margin: 0 1ex;
+}
+
+.control h4 {
+	margin: 0 0 8px 0;
+	text-align: center;
+}
+
+.control .disp {
+	margin: 4px 0 0 0;
+	text-align: center;
+}
+
+#terminal {
+	font-family: TeleType;
+	width: 100%;
+	height: 10cm;
+	position: absolute;
+	top: 200px;
+	opacity: 0.1;
+	display: none;
+}
+
+#debug {
+	font-family: TeleType;
+	width: 100%;
+	height: 5cm;
+	display: none;
+}
+
+.controls {
+	position: absolute;
+	z-index: 100;
+	display: none;
+}
+
+.introMessage {
+        color: #aaa;
+        margin: auto;
+        width: 40%;
+        padding: 10px;
+}
+
+.introMessage tt {
+              color: white ;
+              }
