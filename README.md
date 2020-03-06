@@ -9,5 +9,6 @@ Visit [https://pavel-krivanek.github.io/pdp11/](https://pavel-krivanek.github.io
 ## Notes
 
 - Based on [http://pdp11.aiju.de/](http://aiju.de/code/pdp11/)
+- use DELETE key to interrupt printing (clear buffer)
 - you can use mouse to move paper
 - printing of multiple pages does not work well in Firefox
