@@ -585,7 +585,7 @@ step()
 		if(val == 0) PS |= FLAGZ;
 		if(val & 0x8000) PS |= FLAGN;
 		if(!((val1 ^ val2) & 0x8000) && ((val2 ^ val) & 0x8000)) PS |= FLAGV;
-		if(val1 + val2 >= 0xFFFF) PS |= FLAGC;
+		if(val1 + val2 > 0xFFFF) PS |= FLAGC;	// BUGFIX was >=
 		memwrite(da, 2, val);
 		return;
 	case 0160000: // SUB
