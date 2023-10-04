@@ -94,6 +94,7 @@ conswrite16(a,v)
 		case 13: break;
 		default:
 			writeterminal(String.fromCharCode(v & 0x7F));
+//			writeterminal(String.fromCharCode(v & 0xFF));
 		}
 		TPS &= 0xff7f;
 		if(TPS & (1<<6))

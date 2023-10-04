@@ -1,10 +1,19 @@
+// Updates by JGH, Apr-2021
+//  CHR$127 ignored, CHR$8 backspace, CHR$9 TABs expand option
+//  single-spaced lines, >CHR$96 forced to upper case, CHR$96=UKP
+//  CHR$95 prints underline using half-spaced hyphen, CHR$12 formfeeds
+//  BS, TAB, ESC, Ctrl-Letter return keypresses
+//  BUGS: Firefox: prevents Ctrl-N, Ctrl-T, Ctrl-W, impossible to prevent this
+//        Chrome: almost all CHR$<32 intercepted by browser, including ESC and BS
+//        SeaMonkey: returns all control characters
+
 "use strict";
-var typingSpeed = 50;
+var typingSpeed = 50; // 10cs
 const bell_width = 72 - 5;
 const max_width = 72 - 1;
 const tab_width = 8;
 const xpx = 12; // characters width/heigth
-const ypx = 30;
+const ypx = 18; // was 30
 const char_height = 20;
 const margin_top = 40;
 const margin_left = 90;
@@ -62,44 +71,49 @@ function advance_one_space() {
 
 function keypress(e) {
 
-    // Prevent browser special key actions as long as ctrl/alt/cmd is not being held
-    if (!e.altKey && !e.ctrlKey && !e.metaKey) {
+    var charCode = e.charCode;
+
+    // Prevent browser special key actions as long as alt/cmd is not being held
+    if (!e.altKey && !e.metaKey) {
         e.preventDefault();
         e.stopPropagation();
     }
 
+    if (e.ctrlKey) {
+        if ((charCode & 64) == 64) charCode = charCode & 31;
+        if (charCode == 39) charCode = 0;
+        if (charCode == 54) charCode = 30;
+        if (charCode == 45) charCode = 31;
+    }
+
     // Don't handle keys that are handled by keydown functions
-    if (e.charCode == 0) {
+    if (charCode == 0) {
         // Note the use of keyCode here so these numbers will match the keydown ones
         switch (e.keyCode) {
             case 8:
             case 9:
             case 13:
-            case 37:
-            case 38:
-            case 39:
-            case 40:
-            case 16:
-            case 18:
-            case 20:
             case 27:
-            case 17:
-            case 224:
+                charCode=e.keyCode; break;
+            otherwise:
                 return false;
         }
     }
+
     // Record the keypress for mutex purposes, even if we're not going to act on it
-    keypress_keys[keydown_keycode] = 1; // Have to use charCode as that's the only one available to both keypress and keyup
+    if (charCode != 27) {
+        keypress_keys[keydown_keycode] = 1; // Have to use charCode as that's the only one available to both keypress and keyup
+    }
 
     // Only one printing keypress allowed at a time
     if (Object.keys(keypress_keys).length > 1) {
         return false;
     }
 
-    if ((e.charCode != 10) && (e.charCode != 13)) {
-        addchar(e.charCode);
-        specialchar(e.charCode);
-    }
+//    if ((charCode != 10) && (charCode != 13)) {
+        addchar(charCode);
+//        specialchar(charCode);
+//    }
 }
 
 function typeCharacter(charCode, shiftKey) {
@@ -121,20 +135,28 @@ function printer() {
 function typeCharacterImmediately(charCode, shiftKey) {
     var nosound = false;
 
-    if (charCode == 13) return; // ignore
-    if (charCode == 0) return; // ignore
+    if (charCode == 127) charCode=8;
+    if (charCode == 13)  x = 0;
+    if (charCode == 9)   charCode=32; // Don't expand TABs, comment out to expand
+    if (charCode == 8)   if (x > 0) x -= xpx;
+    if (charCode == 0)   return; // ignore
     if (charCode == 10) {
         crlf();
         move_page();
     }
+//    if (charCode == 12) {
+//        crlf(); move_page();
+//        crlf(); move_page();
+//        crlf(); move_page();
+//        crlf(); move_page();
+//    }
 
     if (charCode != 32 && charCode != 127 && !((charCode === 10) || (charCode === 13)))
         $("#cursorImage").attr("src", "head2.png");
 
     var c;
+    if (charCode > 96) charCode = charCode & 95;
     c = String.fromCharCode(charCode);
-
-    if (charCode == 127) c = " ";
 
     // Vertical offset
     if (!(c in voffset)) {
@@ -145,16 +167,21 @@ function typeCharacterImmediately(charCode, shiftKey) {
     }
 
     let this_voffset = (voffset[c].threshold <= brokenness) ? Math.round(voffset[c].direction * brokenness / 33) : 0;
+    if (charCode == 95) {
+        this_voffset += ypx/2;
+        c = "-";
+    }
+//    output_character(c, this_voffset, '.output');
 
-    output_character(c, this_voffset, '.output');
-
-    if (charCode != 10) {
+    if (charCode > 31) {
+        output_character(c, this_voffset, '.output');
         advance_one_space();
     }
-    if (charCode == 127) {
+    if (charCode == 9) { // Expand TABs
         advance_one_space();
+        while (((x/xpx) & 7) && ((x / xpx) < max_width)) {
         advance_one_space();
-        advance_one_space();
+        }
     }
 
     if (c.match(/\S/)) {
@@ -165,6 +192,9 @@ function typeCharacterImmediately(charCode, shiftKey) {
         $.ionSound.play('bell');
     } else if (!nosound) {
         switch (charCode) {
+            case 8:
+            case 9:
+            case 10:
             case 32:
             case 127:
                 $.ionSound.play('type-space');
@@ -177,7 +207,7 @@ function typeCharacterImmediately(charCode, shiftKey) {
     setCursorPosition();
 
     setTimeout(function() {
-        if (charCode != 32 && charCode != 9) {
+        if (charCode > 32 || charCode == 8) {
             switch (spoolPosition) {
                 case 1:
                     headImage = "head.png";
@@ -196,7 +226,7 @@ function typeCharacterImmediately(charCode, shiftKey) {
 }
 
 function output_character(aCharacter, this_voffset, where) {
-    let c = aCharacter.toUpperCase();
+    let c = aCharacter;
     // Choose an alpha level with a random element to simulate uneven key pressure and ribbon ink
     var ink_level = (ink_remaining > 0) ? ink_remaining / 400 - ink_variation + Math.random() * ink_variation : 0;
 
@@ -240,17 +270,17 @@ function keydown_nonmod(e) {
     }
     switch (e.which) {
         case 9: // tab
+// odd, why no semicolons?
             if (e.charCode == 0) {
                 e.preventDefault();
-
                 e.preventDefault()
                 specialchar(9)
             }
             break;
-        case 13: // enter
-            addchar(13);
-            specialchar(13);
-            break;
+//        case 13: // enter
+//            addchar(13);
+//            specialchar(13);
+//            break;
         case 46: // del
             if (e.charCode == 0) {
                 e.preventDefault();
